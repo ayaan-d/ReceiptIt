@@ -1,4 +1,4 @@
-const { BlobServiceClient, StorageSharedKeyCredential } = require('@azure/storage-blob');
+const { BlobServiceClient } = require('@azure/storage-blob');
 
 class BlobHandler {
     constructor(accountName, accountKey, containerName, sasToken) {
@@ -6,8 +6,8 @@ class BlobHandler {
         this.accountKey = accountKey;
         this.containerName = containerName;
         this.sasToken = sasToken;
-        this.sharedKeyCredential = new StorageSharedKeyCredential(this.accountName, this.accountKey);
-        this.blobServiceClient = new BlobServiceClient(`https://${accountName}.blob.core.windows.net`, this.sharedKeyCredential);
+        this.connectionString = `DefaultEndpointsProtocol=https;AccountName=${this.accountName};AccountKey=${this.accountKey};EndpointSuffix=core.windows.net`;
+        this.blobServiceClient = BlobServiceClient.fromConnectionString(this.connectionString);
     }
 
     // Function to upload a file to Azure Blob Storage

@@ -1,4 +1,4 @@
-const { AzureKeyCredential, DocumentAnalysisClient } = require("@azure/ai-form-recognizer");
+const { AzureKeyCredential, DocumentAnalysisClient } = require('@azure/ai-form-recognizer');
 
 class OcrHandler {
   constructor(endpoint, key) {
