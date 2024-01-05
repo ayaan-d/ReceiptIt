@@ -2,6 +2,11 @@ const express = require('express');
 const router = express.Router();
 const cors = require('cors');
 const { test, registerUser, loginUser, getProfile } = require('../controllers/authController');
+const { handleFileUpload } = require('../controllers/uploadController');
+const multer = require('multer');
+
+
+const upload = multer({ dest: './uploads' });
 
 router.use(
     cors({
@@ -13,8 +18,8 @@ router.use(
 router.get('/', test)
 
 router.post('/register', registerUser)
-
 router.post('/login', loginUser)
+router.post('/upload', upload.single('receipt'), handleFileUpload)
 
 router.get('/profile', getProfile)
 
