@@ -8,9 +8,16 @@ import axios from 'axios';
 export default function Dashboard() {
 
     const [selectedFile, setSelectedFile] = useState(null);
+    const {user} = useContext(UserContext)
     
     const chooseFile = (e) => {
         setSelectedFile(e.target.files[0]);
+    }
+
+    const removeFile = () => {
+        setSelectedFile(null);
+        document.getElementById('file-input').value = '';
+        toast.success('File removed');
     }
 
     const uploadFile = async (e) => {
@@ -32,15 +39,15 @@ export default function Dashboard() {
           console.error('Error uploading file:', error);
         }
       };
-
-    const {user} = useContext(UserContext)
+    
     return (
         <div>
             <h1>Dashboard</h1>
             {!!user &&(<h2>Hi {user.name} </h2>)}
             <h1>Receipt Upload Page</h1>
-            <input type="file" onChange={chooseFile} />
+            <input id="file-input" type="file" onChange={chooseFile} />
             <button onClick={uploadFile}>Upload</button>
+            <button onClick={removeFile}>Remove File</button>
         </div>
     )
 }
