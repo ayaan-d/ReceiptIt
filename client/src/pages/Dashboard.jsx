@@ -50,6 +50,7 @@ export default function Dashboard() {
 
     const formData = new FormData();
     formData.append('receipt', selectedFile);
+        formData.append('email', user.email);
 
     try {
       await axios.post('/upload', formData, {

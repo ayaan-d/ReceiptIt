@@ -1,4 +1,5 @@
 const { AzureKeyCredential, DocumentAnalysisClient } = require('@azure/ai-form-recognizer');
+const { Receipt, Item } = require('../models/user');
 
 class OcrHandler {
   constructor(endpoint, key) {
@@ -7,7 +8,15 @@ class OcrHandler {
     this.documentAnalysisClient = new DocumentAnalysisClient(this.endpoint, new AzureKeyCredential(this.key));
   }
 
+  removeCurrencySymbol(str) {
+    if ((str.charAt(0) == "$") || (str.charAt(0) == "€") || (str.charAt(0) == "£")) {
+      return str.substring(1); // Remove the first character if it's $ or €
+    }
+    return str; // Return the original string if the first character is not $ or €
+  }
+
   async analyzeReceipt(blobUrl) {
+    try {
     const poller = await this.documentAnalysisClient.beginAnalyzeDocument("prebuilt-receipt", blobUrl);
     const {
         documents: [result]
@@ -19,6 +28,36 @@ class OcrHandler {
           Items,
           Total
       } = result.fields;
+
+      const itemsList = []
+
+      for (const item of (Items && Items.values) || []) {
+        const {
+          Description,
+          TotalPrice
+        } = item.properties;
+        
+        const itemDesc = Description.content
+        const itemPrice = this.removeCurrencySymbol(TotalPrice.content)
+
+        const fetchedItem = {
+          name: itemDesc,
+          price: itemPrice
+        }
+
+        itemsList.push(new Item(fetchedItem))
+      }
+
+      const totalFetched = this.removeCurrencySymbol(Total.content)
+
+      const fetchedReceiptInfo = {
+        merchant: MerchantName.content, 
+        totalPrice: totalFetched, 
+        items: itemsList, 
+        date: new Date()
+      }
+
+      const receipt = new Receipt(fetchedReceiptInfo)
 
       console.log("=== Receipt Information ===");
       console.log("Type:", result.docType);
@@ -35,10 +74,15 @@ class OcrHandler {
           console.log("  Total Price:", TotalPrice && TotalPrice.content);
       }
       console.log("Total:", Total && Total.content);
-    
+
+
+      return receipt;
     } else {
       throw new Error("Expected at least one receipt in the result.");
     }
+  } catch (err) {
+    throw new Error("Error processing receipt")
+  }
   }
 }
 
