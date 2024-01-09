@@ -61,7 +61,7 @@ const loginUser = async (req, res) => {
         const {email, password} = req.body;
 
         // check if user exists
-        const user = await User.findOne({email})
+        const user = await User.findOne({email: email})
         if (!user) {
             return res.json({
                 error: 'No user associated with that email'
@@ -89,7 +89,8 @@ const getProfile = (req, res) => {
     if (token) {
         jwt.verify(token, process.env.JWT_SECRET, {}, (err, user) => {
             if (err) throw err;
-            res.json(user)
+            console.log("in get profile", user.email);
+            res.json(user);
         })
     } else {
         res.json(null)

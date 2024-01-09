@@ -3,6 +3,7 @@ const router = express.Router();
 const cors = require('cors');
 const { test, registerUser, loginUser, getProfile } = require('../controllers/authController');
 const { handleFileUpload } = require('../controllers/uploadController');
+const { fetchDashboardInfo } = require('../controllers/dashboardController');
 const multer = require('multer');
 
 
@@ -20,6 +21,7 @@ router.get('/', test)
 router.post('/register', registerUser)
 router.post('/login', loginUser)
 router.post('/upload', upload.single('receipt'), handleFileUpload)
+router.get('/dash', fetchDashboardInfo);
 
 router.get('/profile', getProfile)
 

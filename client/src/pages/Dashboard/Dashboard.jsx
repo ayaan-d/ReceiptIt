@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useContext } from 'react';
+import { useEffect } from 'react';
 import { UserContext } from '../../context/userContext';
 import { toast } from 'react-hot-toast';
 import { Col, List, ListItem } from "@tremor/react";
@@ -16,20 +17,32 @@ import './Dashboard.css'
 
 export default function Dashboard() {
 
-  const purchases = [
-    {
-      item: "Eggs",
-      price: "$300",
-    },
-    {
-      item: "Milk",
-      price: "$40",
-    },
-  ];
-
-
-  const [selectedFile, setSelectedFile] = useState(null);
   const { user } = useContext(UserContext)
+  const [selectedFile, setSelectedFile] = useState(null);
+  const userEmail = user.email;
+  console.log("dashboard file: ", userEmail);
+
+  const [ dashboardData, setDashboardData ] = useState(null);
+
+  useEffect(() => {
+    async function fetchData(){
+      try {
+        const email = user.email;
+        const response = await axios.get('/dash', {
+          params: {
+            uEmail: email
+          }
+        });
+        console.log("response data")
+        console.log(response.data)
+        setDashboardData(response.data);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   const chooseFile = (e) => {
     setSelectedFile(e.target.files[0]);
@@ -49,7 +62,7 @@ export default function Dashboard() {
     formData.append('email', user.email);
 
     try {
-     const [data] = await axios.post('/upload', formData, {
+     await axios.post('/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -88,6 +101,21 @@ export default function Dashboard() {
       name: "Zurich",
       sales: 1398,
     },
+  ];
+
+  const purchases = [
+    {
+      item: "Eggs",
+      price: "$300",
+    },
+    {
+      item: "Milk",
+      price: "$40",
+    },
+    {
+      item: "most visited",
+      price: dashboardData.mostVisitedMerchant,
+    }
   ];
 
   const valueFormatter = (number) => `$ ${new Intl.NumberFormat("us").format(number).toString()}`;
@@ -142,7 +170,6 @@ export default function Dashboard() {
         </Card>
 
       </main>
-      );
 
 
       {/* <h1>Dashboard</h1>
