@@ -218,7 +218,7 @@ const handleFileUpload = async (req, res) => {
     const list = await getListOfItems(userEmail)
     const total = await getTotalAmountSpent(userEmail)
 
-    res.status(200).json({ message: 'Receipt added to user', user: updatedUser });
+    res.status(200).json({ message: 'Receipt added to user', user: updatedUser, mostVisitedMerchant: visited });
 
   } catch (error) {
     console.error('Error:', error);
@@ -226,4 +226,5 @@ const handleFileUpload = async (req, res) => {
   }
 };
 
-module.exports = { handleFileUpload };
+// module.exports = { handleFileUpload };
+export default all;

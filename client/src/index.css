@@ -40,7 +40,8 @@
   --text-dark:#000000;
   --background-neutral:#e1e9ef;
   --background-blue: #2948a0; */
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Inter, sans-serif;
+  -webkit-font-smoothing: antialiased;
   line-height: 1.5;
   font-weight: 400;
 

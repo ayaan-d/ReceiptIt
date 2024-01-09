@@ -41,7 +41,7 @@ body {
     border-radius: 2rem;
 }
 #picdiv {
-    margin-top:13%;
+    margin-top:27vh;
     margin-left: 15%;
 }
 
@@ -75,7 +75,7 @@ body {
 
 #landing {
     /* background-image:url('https://cdn.glitch.me/4138ce3b-24ae-49a3-bd13-8f07d69684f5/business-website-background.jpg?v=1639778102868'); */
-    background-image: url("../assets/background-vec-cool.png");
+    background-image: url("../../assets/background-vec-cool.png");
     background-size: cover;
     background-position: center;
     height: 100vh;

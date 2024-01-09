@@ -1,11 +1,11 @@
 import './App.css'
 import {Routes, Route} from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Navbar from './components/Navbar/Navbar';
+import Home from './pages/Home/Home';
+import Login from './pages/Login/Login';
+import Register from './pages/Register/Register';
 //import Upload from './pages/Upload';
-import Dashboard from './pages/Dashboard'
+import Dashboard from './pages/Dashboard/Dashboard'
 import axios from 'axios';
 import { Toaster } from 'react-hot-toast';
 import {UserContextProvider} from './context/userContext';

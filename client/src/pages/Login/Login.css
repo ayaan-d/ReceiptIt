@@ -1,0 +1,23 @@
+
+#root{
+    --theme-brand-emphasis: transparent;
+    --brand-emphasis: #1d6ea5;
+}
+    
+#loginDiv {
+    margin-top: 35vh;
+}
+
+
+
+.button {
+   color: #2e8cca
+}
+
+form {
+border-spacing: 1vh;
+}
+
+.spacing {
+    padding: 2%;
+}
