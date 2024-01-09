@@ -22,7 +22,14 @@ export default function Dashboard() {
   const userEmail = user.email;
   console.log("dashboard file: ", userEmail);
 
-  const [ dashboardData, setDashboardData ] = useState(null);
+  const [ dashboardData, setDashboardData ] = useState({
+    mostVisitedMerchant: '',
+    userBudget: '',
+    amountSpentThisMonth: '',
+    amountSpentEachMonth: '',
+    listOfItems: '',
+    totalAmountSpent: ''
+  });
 
   useEffect(() => {
     async function fetchData(){
