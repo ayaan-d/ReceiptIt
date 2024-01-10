@@ -84,5 +84,4 @@ Project Link: https://github.com/ayaan-d/ReceiptIt
 [ht]: https://img.shields.io/badge/HTML-239120?style=for-the-badge&logo=html5&logoColor=white
 [cs]: https://img.shields.io/badge/CSS-239120?&style=for-the-badge&logo=css3&logoColor=white
 [az]: https://img.shields.io/badge/Microsoft_Azure-0089D6?style=for-the-badge&logo=microsoft-azure&logoColor=white
-[co]: 
-[product-screenshot]: studybot.png
+[product-screenshot]: ./client/src/assets/receiptithome.png
