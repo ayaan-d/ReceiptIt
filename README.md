@@ -12,7 +12,7 @@
 <br />
 <div align="center">
   <a href="">
-    <img src="botlogo.png" alt="Logo" width="80" height="80">
+    <img src="./client/src/assets/Receipt.svg" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">ReceiptIt</h3>
