@@ -1,4 +1,6 @@
 const { User, Receipt, Item } = require('../models/user');
+const { CohereClient } = require('cohere-ai');
+const getExamples = require('./examples.json');
 
 // Get the most visited merchant
 async function getMostVisitedMerchant(userEmail) {
@@ -68,6 +70,31 @@ async function getListOfItems(userEmail) {
       });
     });
     console.log("Items List: ", items);
+    return items;
+}
+
+async function getItemsThisMonth(userEmail) {
+    const user = await User.findOne({email: userEmail});
+    if (!user) {
+      return null; // User not found
+    }
+
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+  
+    const items = [];
+    user.receipts.forEach((receipt) => {
+        const receiptDate = new Date(receipt.date);
+        const receiptMonth = receiptDate.getMonth();
+        const receiptYear = receiptDate.getFullYear();
+
+        if (receiptMonth === currentMonth && receiptYear === currentYear) {
+            receipt.items.forEach((item) => {
+                items.push(item);
+            });
+        }
+    });
     return items;
 }
 
@@ -167,6 +194,7 @@ const fetchDashboardInfo = async (req, res) => {
         const amountSpentThisMonth = await getAmountSpentThisMonth(userEmail)
         const listOfItems = await getListOfItems(userEmail)
         const totalAmountSpent = await getTotalAmountSpent(userEmail)
+        const itemsThisMonth = await getItemsThisMonth(userEmail)
 
         const dashboardData = {
           mostVisitedMerchant,
@@ -174,7 +202,8 @@ const fetchDashboardInfo = async (req, res) => {
           amountSpentThisMonth,
           amountSpentEachMonth,
           listOfItems,
-          totalAmountSpent
+          totalAmountSpent,
+          itemsThisMonth
         };
 
         console.log("dashboard data")
@@ -187,6 +216,54 @@ const fetchDashboardInfo = async (req, res) => {
     }
 }
 
+const cohere = new CohereClient({
+    token: process.env.COHERE_KEY,
+});
+
+const fetchCategorizedList = async (req, res) => {
+    try {
+
+        const userEmail = req.query.email
+        console.log("rec email: ", userEmail)
+        const userCategory = req.query.category
+        console.log("rec email: ", userCategory)
+        const thisMonth = await getItemsThisMonth(userEmail)
+        console.log("this month: ", thisMonth)
+        const itemNames = [];
+        for (const key in thisMonth) {
+          if (Object.prototype.hasOwnProperty.call(thisMonth, key)) {
+            const item = thisMonth[key];
+            itemNames.push(item.name);
+          }
+        }
+        console.log(itemNames);
+        const inCategory = []
+
+        for (const key in itemNames.slice(0, 5)) {
+            if (Object.prototype.hasOwnProperty.call(thisMonth, key)) {
+                const name = itemNames[key]
+                const generate = await cohere.generate({
+                    prompt: `Answer only YES or NO with no other text in the response. does ${name} fit in the category of ${userCategory}? please response specifically "YES" or "NO" do not give any variations`
+                })
+                console.log(generate)
+                console.log("text found: ", generate.generations[0].text)
+                console.log("my checkers: ", " YES", "YES")
+                console.log("match? : ", (generate.generations[0].text == " YES") || (generate.generations[0].text == "YES"))
+                if ((generate.generations[0].text == " YES") || (generate.generations[0].text == "YES")) {
+                    inCategory.push(name)
+                }
+            }
+        }
+
+        console.log("IN CATEGORY: ", inCategory)
+        return res.json(inCategory)
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 module.exports = { 
-    fetchDashboardInfo
+    fetchDashboardInfo,
+    fetchCategorizedList
 };

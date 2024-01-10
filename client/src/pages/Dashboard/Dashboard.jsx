@@ -19,6 +19,8 @@ export default function Dashboard() {
 
   const { user } = useContext(UserContext)
   const [selectedFile, setSelectedFile] = useState(null);
+  const [category, setCategory] = useState('');
+  const [categoryList, setCategoryList] = useState([]);
   const userEmail = user.email;
   console.log("dashboard file: ", userEmail);
 
@@ -28,7 +30,8 @@ export default function Dashboard() {
     amountSpentThisMonth: '',
     amountSpentEachMonth: '',
     listOfItems: '',
-    totalAmountSpent: ''
+    totalAmountSpent: '',
+    itemsThisMonth: '',
   });
 
   useEffect(() => {
@@ -81,6 +84,33 @@ export default function Dashboard() {
       console.error('Error uploading file:', error);
     }
   };
+
+  const updateCategory = async (e) => {
+    e.preventDefault();
+    console.log("before cat: ", category)
+    setCategory(e.target.value)
+    console.log("curr cat: ", category)
+
+  }
+
+  const fetchCategorized = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.get('/cohere', {
+        params: {
+          email: user.email,
+          category: category
+        }
+      });
+      console.log("call data: ", response.data)
+      setCategoryList(response.data)
+      console.log("cat total: ", categoryList)
+      
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 
   const cities = [
@@ -140,6 +170,24 @@ export default function Dashboard() {
         {!!user && <Title id='welcome'><Bold>Welcome <Italic style={{color:'indigo'}}>{user.name}</Italic></Bold> </Title>}
         <Text>Lorem ipsum dolor sit amet, consetetur sadipscing elitr.</Text>
 
+        <h3>List of Recent Items:</h3>
+        <ul>
+          {categoryList.map((item, index) => (
+            <li key={index}>{item}</li>
+          ))}
+        </ul>
+
+        <form onSubmit={fetchCategorized}>
+        <label>
+          Enter category:
+          <input
+            type="text"
+            value={category}
+            onChange={updateCategory}
+          />
+        </label>
+        <button type="submit">Submit</button>
+        </form>
 
         <Card className="max-w-lg">
           <Title>Sales</Title>
